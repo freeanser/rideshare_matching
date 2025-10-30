@@ -1,13 +1,50 @@
 # Python cache
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 
 # Virtual environments
 venv/
 .venv/
+env/
+ENV/
 
 # Environment files
 .env
+*.env
 
-# MacOS system files
+# IDE / Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS system files
 .DS_Store
+Thumbs.db
+
+# Package build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Test / coverage files
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Database-related
+alembic/versions/*.pyc
+instance/
+*.db
+*.sqlite3
+
+# Logs
+*.log
+
+# Node.js frontend
+frontend/node_modules/
+frontend/build/
+frontend/.env
