@@ -1,10 +1,7 @@
 # backend/tests/test_admin_routes.py
 
 import json
-# from app import create_app
-# from ..app import create_app
-# from backend.app import create_app
-from ..app import create_app
+from app import create_app
 
 def test_get_all_users():
     app = create_app()

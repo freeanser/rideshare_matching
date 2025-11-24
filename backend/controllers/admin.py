@@ -1,8 +1,8 @@
 # backend/controller/admin.py
 
 from flask import Blueprint, jsonify, request
-from ..models import User 
-from ..database import SessionLocal 
+from models import User 
+from database import SessionLocal 
 from sqlalchemy.exc import SQLAlchemyError
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')

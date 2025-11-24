@@ -2,8 +2,7 @@
 
 from flask import Flask
 from flask_cors import CORS
-from .controllers.admin import admin_bp
-# from controllers.admin import admin_bp
+from controllers.admin import admin_bp
 
 def create_app():
     app = Flask(__name__)
