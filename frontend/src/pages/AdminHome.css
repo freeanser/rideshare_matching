@@ -124,3 +124,19 @@ body,
 .error-box {
   border-left: 4px solid #ef4444;
 }
+
+.edit-input {
+  width: 100%;
+  background-color: #020617;
+  border: 1px solid #1f2937;
+  border-radius: 6px;
+  padding: 6px 8px;
+  color: #e5e7eb;
+  font-size: 14px;
+}
+
+.edit-input:focus {
+  outline: none;
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.4);
+}
