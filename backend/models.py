@@ -1,6 +1,6 @@
 # backend/models.py
 from sqlalchemy import Column, Integer, String, Boolean, Index
-from .database import Base  # 从 database.py 导入 Base, 擇一，建議用絕對路徑
+from database import Base  # 从 database.py 导入 Base, 擇一，建議用絕對路徑
 
 class User(Base):
     __tablename__ = 'users'

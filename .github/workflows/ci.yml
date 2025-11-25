@@ -1,0 +1,40 @@
+# .github/workflows/ci.yml
+name: Backend CI Test
+
+# 觸發時機：當推送到 main 或 發起 Pull Request 到 main 時
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest  # 指定用 Linux 環境跑
+
+    steps:
+    # 1. 把程式碼抓下來
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # 2. 設定 Python 環境 (這裡用 3.11)
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    # 3. 安裝依賴套件 (根據你的清單)
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f backend/requirements.txt ]; then pip install -r backend/requirements.txt; fi
+
+    # 4. ★ 執行測試 (關鍵指令！)
+    - name: Run Pytest
+      working-directory: ./backend
+      # ★ 新增下面這三行，設定環境變數
+      env:
+        DATABASE_URL: "sqlite:///:memory:"
+        SECRET_KEY: "dev-test-secret-key"  # 加åå SECRET_KEY 防止 Flask 報錯
+      run: |
+        python -m pytest
