@@ -30,8 +30,11 @@ jobs:
         if [ -f backend/requirements.txt ]; then pip install -r backend/requirements.txt; fi
 
     # 4. ★ 執行測試 (關鍵指令！)
-    # 使用我們剛剛驗證過的 -m 模式，確保路徑正確
     - name: Run Pytest
-      working-directory: ./backend  # 如果你的 app.py 在 backend 資料夾內，要先切進去
+      working-directory: ./backend
+      # ★ 新增下面這三行，設定環境變數
+      env:
+        DATABASE_URL: "sqlite:///:memory:"
+        SECRET_KEY: "dev-test-secret-key"  # 加åå SECRET_KEY 防止 Flask 報錯
       run: |
         python -m pytest
