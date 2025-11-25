@@ -27,7 +27,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        if [ -f requirements.txt ]; then pip install -r backend/requirements.txt; fi
+        if [ -f backend/requirements.txt ]; then pip install -r backend/requirements.txt; fi
 
     # 4. ★ 執行測試 (關鍵指令！)
     # 使用我們剛剛驗證過的 -m 模式，確保路徑正確
