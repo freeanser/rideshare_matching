@@ -7,7 +7,7 @@ from models import User
 
 # ------------------------------------------------------------------
 # 測試案例 1: GET /admin/users (成功取得列表)
-# ------------------------------------------------------------------
+# ---------------------------------------------------------------
 # patch 的路徑必須是你 controller 檔案中 "匯入 SessionLocal 的位置"
 @patch('controllers.admin.SessionLocal') 
 def test_get_all_users_success(mock_session_cls, client):
