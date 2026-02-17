@@ -54,9 +54,9 @@ jobs:
       # ★ 新增下面這三行，設定環境變數，讓測試能連到剛剛啟動的 PostgreSQL 服務
       # 但是因為目前只有測試 Unit Test，所以不需要整個資料庫服務，直接在測試裡面用 mock_session_cls 和 unittest.mock 連到 localhost 就好。
 
-      # env:
-      #   DATABASE_URL: "postgresql://user:password@localhost:5432/test_db"
-      #   SECRET_KEY: "dev-test-secret-key"
+      env:
+        DATABASE_URL: "postgresql://user:password@localhost:5432/test_db"
+        SECRET_KEY: "dev-test-secret-key"
       run: |
         python -m pytest --cov=. --cov-report=xml --cov-report=term-missing
 
