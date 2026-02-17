@@ -53,3 +53,40 @@ def test_get_all_users_db_error(mock_session_cls, client):
     assert response.status_code == 500
     assert "Database operation failed" in response.get_json()['message']
     mock_session.close.assert_called_once()
+
+# ------------------------------------------------------------------
+# 測試案例 3: PUT /admin/users/<id> (成功更新)
+# ------------------------------------------------------------------
+@patch('controllers.admin.SessionLocal')
+def test_update_user_success(mock_session_cls, client):
+    """
+    情境: 提供 user_id 與更新資料，API 應更新該名使用者並回傳 200。
+    """
+    mock_session = mock_session_cls.return_value
+    
+    # 1. 準備原始資料 (目前在資料庫裡的樣子)
+    old_user = User(id=1, name="Old Name", email="old@test.com", address="Old City", is_driver=False, is_participating=False)
+    
+    # 2. 設定 Mock：當呼叫 get(1) 時回傳這筆舊資料
+    mock_session.query.return_value.get.return_value = old_user
+
+    # 3. 準備發送到 API 的更新資料
+    update_payload = {
+        "name": "New Name",
+        "is_driver": True
+    }
+
+    # 4. 發送請求
+    response = client.put('/admin/users/1', json=update_payload)
+
+    # 5. 驗證
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data['name'] == "New Name"         # 確認欄位已更新
+    assert data['email'] == "old@test.com"    # 確認未提供的欄位保持原樣
+    assert data['is_driver'] is True          # 確認布林值正確更新
+    
+    # 驗證資料庫動作
+    mock_session.commit.assert_called_once()
+    mock_session.close.assert_called_once()
+
