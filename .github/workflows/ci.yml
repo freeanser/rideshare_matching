@@ -12,21 +12,23 @@ jobs:
   test:
     runs-on: ubuntu-latest  # 指定用 Linux 環境跑
 
-    services:
-          postgres:
-            image: postgres:15
-            env:
-              POSTGRES_USER: user
-              POSTGRES_PASSWORD: password
-              POSTGRES_DB: test_db
-            ports:
-              - 5432:5432
-            # 健康檢查：確保資料庫真的啟動好了，才開始跑測試
-            options: >-
-              --health-cmd pg_isready
-              --health-interval 10s
-              --health-timeout 5s
-              --health-retries 5
+    # 因為目前只有測試 Unit Test，所以不需要整個資料庫服務，直接在測試裡面用 mock_session_cls 和 unittest.mock 連到 localhost 就好。
+    # 如果未來要測試整合測試，才需要下面這段設定，啟動一個 PostgreSQL 的服務容器。
+    # services:
+    #       postgres:
+    #         image: postgres:15
+    #         env:
+    #           POSTGRES_USER: user
+    #           POSTGRES_PASSWORD: password
+    #           POSTGRES_DB: test_db
+    #         ports:
+    #           - 5432:5432
+    #         # 健康檢查：確保資料庫真的啟動好了，才開始跑測試
+    #         options: >-
+    #           --health-cmd pg_isready
+    #           --health-interval 10s
+    #           --health-timeout 5s
+    #           --health-retries 5
     steps:
     # 1. 把程式碼抓下來
     - name: Checkout code
@@ -37,20 +39,35 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: "3.11"
+        cache: 'pip' # 加入這行，會根據 requirements.txt 自動緩存
 
     # 3. 安裝依賴套件 (根據你的清單)
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         if [ -f backend/requirements.txt ]; then pip install -r backend/requirements.txt; fi
-        pip install psycopg2-binary pytest pytest-flask
+        pip install psycopg2-binary pytest pytest-flask pytest-cov
 
     # 4. ★ 執行測試 (關鍵指令！)
-    - name: Run Pytest
+    - name: Run Pytest with Coverage
       working-directory: ./backend
-      # ★ 新增下面這三行，設定環境變數
-      env:
-        DATABASE_URL: "postgresql://user:password@localhost:5432/test_db"
-        SECRET_KEY: "dev-test-secret-key"
+      # ★ 新增下面這三行，設定環境變數，讓測試能連到剛剛啟動的 PostgreSQL 服務
+      # 但是因為目前只有測試 Unit Test，所以不需要整個資料庫服務，直接在測試裡面用 mock_session_cls 和 unittest.mock 連到 localhost 就好。
+
+      # env:
+      #   DATABASE_URL: "postgresql://user:password@localhost:5432/test_db"
+      #   SECRET_KEY: "dev-test-secret-key"
       run: |
-        python -m pytest
+        python -m pytest --cov=. --cov-report=xml --cov-report=term-missing
+
+    # 5. 上傳測試報告 (Artifact)
+    - name: Upload Test Report
+      # 確保測試失敗時也會上傳報告，方便除錯
+      if: always() 
+      uses: actions/upload-artifact@v4
+      with:
+        name: pytest-coverage-report # 你自定義的下載檔名
+        path: |
+          backend/htmlcov
+          backend/coverage.xml
+        retention-days: 7 # 報告保留天數（預設 90 天，通常設 7 天就夠了）
